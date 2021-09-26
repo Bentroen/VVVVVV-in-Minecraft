@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "vvvvvv-in-minecraft"
+version = "0.1.0"
+description = "A 1:1 recreation of VVVVVV in Minecraft: Java Edition"
+authors = ["Bentroen <bemcdc@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+beet = "^0.41.6"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

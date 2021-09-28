@@ -40,6 +40,8 @@ class MapParser:
                 line = line.strip()
 
                 # TODO: Cache folder creation on __init__.py
+                # TODO: Handle special cases (tiles/entities that change on time trial mode etc.)
+                # TODO: Do not export unnecessary properties to JSON (i.e. when warpx/y is false)
 
                 if not state:  # Find start of level data
                     if line == "#if !defined(MAKEANDPLAY)":

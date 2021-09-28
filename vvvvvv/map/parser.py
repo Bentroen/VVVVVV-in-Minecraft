@@ -88,7 +88,7 @@ class MapParser:
                     elif line.startswith("roomname"):
                         roomname = line.split('"')[1]
                     elif line.startswith("roomtileset"):
-                        room["tileset"] = int(line.split("=")[1].strip(" ").strip(";"))
+                        room["tileset"] = int(line.split("=")[1].strip(" ").split(";")[0])
                     elif line.startswith("break"):  # End of room
                         room["roomname"] = roomname
                         room["tiles"] = tiles

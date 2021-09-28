@@ -10,7 +10,7 @@ maps = [
     # "Tower.cpp" special case - needs different handling
 ]
 
-source_path = "../VVVVVV-master/desktop_version/src"
+source_path = "../../VVVVVV-master/desktop_version/src"
 
 
 def split_parentheses(line: str, convert_numbers: bool = False) -> str:

@@ -13,6 +13,14 @@ maps = [
 source_path = "../VVVVVV-master/desktop_version/src"
 
 
+def split_parentheses(line: str, convert_numbers: bool=False) -> str:
+    string = line.split("(")[1].split(")")[0]
+    if convert_numbers:
+        return tuple(int(x) for x in string.split(","))
+    else:
+        return string
+
+
 class MapParser:
     def __init__(self):
         self.rooms = self._parse_files() 
@@ -31,7 +39,6 @@ class MapParser:
             for line in f.readlines():
                 line = line.strip()
 
-                # TODO: Make function for split_parenthesis
                 # TODO: Cache folder creation on __init__.py
 
                 if not state: # Find start of level data
@@ -40,7 +47,7 @@ class MapParser:
 
                 elif state == "rooms":
                     if line.startswith("case rn"): # case rn(##,##):
-                        room_number = line.split("(")[1].split(")")[0]
+                        room_number = split_parentheses(line)
                     elif line.startswith("static const short contents"): # New room begins
                         state = "tiles"
                         room = {}
@@ -62,9 +69,8 @@ class MapParser:
                 
                 elif state == "entities":
                     if line.startswith("obj.createentity"):
-                        entity_str = line.split("(")[1].split(")")[0]
-                        entity = tuple(int(line) for line in entity_str.split(","))
-                        entities.append = []
+                        entity = split_parentheses(line, convert_numbers=True)
+                        entities.append(entity)
                     else:
                         state = "metadata"
 

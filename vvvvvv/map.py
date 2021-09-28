@@ -16,14 +16,14 @@ class MapParser:
     def __init__(self):
         self.rooms = self._parse_files() 
 
-    def _parse_files(self):
+    def _parse_files(self) -> dict:
         areas = {}
         for map in maps:
             path = os.path.join(source_path, map)
             areas[map] = self._parse_file(path)
         return areas
 
-    def _parse_file(self, path):
+    def _parse_file(self, path: str) -> dict:
         rooms = {}
         state = None
         with open(path) as f:
@@ -31,7 +31,7 @@ class MapParser:
                 line = line.strip()
 
                 # TODO: Make function for split_parenthesis
-                # TODO: Type hinting and private method labeling (_method)
+                # TODO: Cache folder creation on __init__.py
 
                 if not state: # Find start of level data
                     if line == "#if !defined(MAKEANDPLAY)":
@@ -89,14 +89,14 @@ class MapParser:
         return rooms
 
 
-def _generate_map_data(path):
+def _generate_map_data(path: str) -> dict:
     rooms = MapParser().rooms
     with open(path, "w") as f:
         json.dump(rooms, f)
     return rooms
 
 
-def fetch_map_data(force_update=False):
+def fetch_map_data(force_update: bool=False) -> dict:
     outpath = os.path.join(".cache", "map.json")
     if force_update:
         return _generate_map_data(outpath)

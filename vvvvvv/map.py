@@ -7,13 +7,13 @@ maps = [
     "Warpclass.cpp",
     "Otherlevel.cpp",
     "Finalclass.cpp"
-    #"Tower.cpp" special case - needs different handling
+    # "Tower.cpp" special case - needs different handling
 ]
 
 source_path = "../VVVVVV-master/desktop_version/src"
 
 
-def split_parentheses(line: str, convert_numbers: bool=False) -> str:
+def split_parentheses(line: str, convert_numbers: bool = False) -> str:
     string = line.split("(")[1].split(")")[0]
     if convert_numbers:
         return tuple(int(x) for x in string.split(","))
@@ -23,7 +23,7 @@ def split_parentheses(line: str, convert_numbers: bool=False) -> str:
 
 class MapParser:
     def __init__(self):
-        self.rooms = self._parse_files() 
+        self.rooms = self._parse_files()
 
     def _parse_files(self) -> dict:
         areas = {}
@@ -41,14 +41,16 @@ class MapParser:
 
                 # TODO: Cache folder creation on __init__.py
 
-                if not state: # Find start of level data
+                if not state:  # Find start of level data
                     if line == "#if !defined(MAKEANDPLAY)":
                         state = "rooms"
 
                 elif state == "rooms":
-                    if line.startswith("case rn"): # case rn(##,##):
+                    if line.startswith("case rn"):  # case rn(##,##):
                         room_number = split_parentheses(line)
-                    elif line.startswith("static const short contents"): # New room begins
+                    elif line.startswith(
+                        "static const short contents"
+                    ):  # New room begins
                         state = "tiles"
                         room = {}
                         tiles = []
@@ -57,16 +59,16 @@ class MapParser:
                         warpx = False
                         warpy = False
                         roomname = ""
-                    elif line == "#endif": # End of rooms
+                    elif line == "#endif":  # End of rooms
                         break
 
                 elif state == "tiles":
-                    if line != "};": # Tile row
+                    if line != "};":  # Tile row
                         row = line.strip(",").split(",")
                         tiles.append(row)
-                    else: # End of tilemap
+                    else:  # End of tilemap
                         state = "entities"
-                
+
                 elif state == "entities":
                     if line.startswith("obj.createentity"):
                         entity = split_parentheses(line, convert_numbers=True)
@@ -83,7 +85,7 @@ class MapParser:
                         warpy = "true" in line
                     elif line.startswith("roomname"):
                         roomname = line.split('"')[1]
-                    elif line.startswith("break"): # End of room
+                    elif line.startswith("break"):  # End of room
                         room["roomname"] = roomname
                         room["tiles"] = tiles
                         room["entities"] = entities
@@ -92,7 +94,7 @@ class MapParser:
                         room["warpy"] = warpy
                         rooms[room_number] = room
                         state = "rooms"
-        
+
         return rooms
 
 
@@ -103,7 +105,7 @@ def _generate_map_data(path: str) -> dict:
     return rooms
 
 
-def fetch_map_data(force_update: bool=False) -> dict:
+def fetch_map_data(force_update: bool = False) -> dict:
     outpath = os.path.join(".cache", "map.json")
     if force_update:
         return _generate_map_data(outpath)

@@ -87,6 +87,8 @@ class MapParser:
                         warpy = "true" in line
                     elif line.startswith("roomname"):
                         roomname = line.split('"')[1]
+                    elif line.startswith("roomtileset"):
+                        room["tileset"] = int(line.split("=")[1].strip(" ").strip(";"))
                     elif line.startswith("break"):  # End of room
                         room["roomname"] = roomname
                         room["tiles"] = tiles

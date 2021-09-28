@@ -29,7 +29,7 @@ class MapParser:
         areas = {}
         for map in maps:
             path = os.path.join(source_path, map)
-            areas[map] = self._parse_file(path)
+            areas.update(self._parse_file(path))
         return areas
 
     def _parse_file(self, path: str) -> dict:

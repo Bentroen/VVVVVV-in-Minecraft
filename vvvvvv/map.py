@@ -45,6 +45,7 @@ class MapParser:
                         room = {}
                         tiles = []
                         entities = []
+                        color = 0
                         warpx = False
                         warpy = False
                         roomname = ""
@@ -68,7 +69,7 @@ class MapParser:
 
                 elif state == "metadata":
                     if line.startswith("rcol"):
-                        color = int(line.split(" ")[1].split(";")[0])
+                        color = int(line.split("=")[1].strip(" ").strip(";"))
                     if line.startswith("warpx"):
                         warpx = "true" in line
                     elif line.startswith("warpy"):

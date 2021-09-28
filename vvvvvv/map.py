@@ -12,6 +12,7 @@ maps = [
 
 source_path = "../VVVVVV-master/desktop_version/src"
 
+
 class MapParser:
     def __init__(self):
         self.rooms = self._parse_files() 

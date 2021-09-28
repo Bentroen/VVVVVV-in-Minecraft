@@ -110,4 +110,4 @@ def fetch_map_data(force_update: bool=False) -> dict:
 
 
 if __name__ == "__main__":
-    fetch_map_data()
+    fetch_map_data(force_update=True)

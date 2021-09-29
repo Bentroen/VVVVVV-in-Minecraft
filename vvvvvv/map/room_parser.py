@@ -1,34 +1,86 @@
 import os
 import json
 
-maps = [
-    "Spacestation2.cpp",
-    "Labclass.cpp",
-    "Warpclass.cpp",
-    "Otherlevel.cpp",
-    "Finalclass.cpp"
-    # "Tower.cpp" special case - needs different handling
-]
 
 source_path = "../../VVVVVV-master/desktop_version/src"
 
 
-def split_parentheses(line: str, convert_numbers: bool = False) -> str:
-    string = line.split("(")[1].split(")")[0]
-    if convert_numbers:
-        return tuple(int(x) for x in string.split(","))
+# https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L88-L110
+areamap = [
+    [1, 2, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4],
+    [1, 2, 2, 2, 2, 2, 2, 0, 0, 3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4],
+    [0, 1, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4],
+    [0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 5, 5, 5, 5, 4, 4, 4, 4],
+    [0, 0, 2, 2, 2, 0, 0, 0, 0, 3, 11, 11, 5, 5, 5, 5, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 11, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 5, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 0, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 0, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 0, 0, 0, 0, 0, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 2, 2, 2, 2, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 2, 2, 2, 2, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+]
+
+
+def _get_room_tileset(rx: int, ry: int) -> int:
+    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1484
+    area = _get_room_area(rx, ry)
+    if area == 0 or area == 1:  # World Map (defined per room)
+        pass
+    elif area == 5:  # Space Station
+        tileset = 0
     else:
-        return string
+        tileset = 1
 
 
-class MapParser:
+def _get_room_area(rx: int, ry: int) -> int:
+    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L742-L760
+    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1382-L1413
+    if rx - 100 >= 0 and rx - 100 < 20 and ry - 100 >= 0 and ry - 100 < 20:
+        return areamap[rx - 100][ry - 100]
+    else:
+        if rx == 49 and ry == 52:
+            # entered tower 1
+            return 7
+        elif rx == 49 and ry == 53:
+            # re-entered tower 1
+            return 8
+        elif rx == 51 and ry == 54:
+            # entered tower 2
+            return 9
+        elif rx == 51 and ry == 53:
+            # re-entered tower 2
+            t = 10
+        else:
+            return 6
+
+
+class LevelParser:
+
+    levels = [
+        "Spacestation2.cpp",
+        "Labclass.cpp",
+        "Warpclass.cpp",
+        "Otherlevel.cpp",
+        "Finalclass.cpp"
+        # "Tower.cpp" special case - needs different handling
+    ]
+
     def __init__(self):
         self.rooms = self._parse_files()
 
     def _parse_files(self) -> dict:
         areas = {}
-        for map in maps:
-            path = os.path.join(source_path, map)
+        for level in self.levels:
+            path = os.path.join(source_path, level)
             areas.update(self._parse_file(path))
         return areas
 
@@ -49,7 +101,7 @@ class MapParser:
 
                 elif state == "rooms":
                     if line.startswith("case rn"):  # case rn(##,##):
-                        room_number = split_parentheses(line)
+                        room_number = self._split_parentheses(line)
                     elif line.startswith(
                         "static const short contents"
                     ):  # New room begins
@@ -58,6 +110,7 @@ class MapParser:
                         tiles = []
                         entities = []
                         color = 0
+                        tileset = None
                         warpx = False
                         warpy = False
                         roomname = ""
@@ -73,7 +126,7 @@ class MapParser:
 
                 elif state == "entities":
                     if line.startswith("obj.createentity"):
-                        entity = split_parentheses(line, convert_numbers=True)
+                        entity = self._split_parentheses(line, convert_numbers=True)
                         entities.append(entity)
                     else:
                         state = "metadata"
@@ -88,12 +141,16 @@ class MapParser:
                     elif line.startswith("roomname"):
                         roomname = line.split('"')[1]
                     elif line.startswith("roomtileset"):
-                        room["tileset"] = int(line.split("=")[1].strip(" ").split(";")[0])
+                        tileset = int(line.split("=")[1].strip(" ").split(";")[0])
                     elif line.startswith("break"):  # End of room
+                        x, y = (int(x) for x in room_number.split(","))
                         room["roomname"] = roomname
                         room["tiles"] = tiles
                         room["entities"] = entities
                         room["color"] = color
+                        room["tileset"] = (
+                            tileset if tileset else _get_room_tileset(x, y)
+                        )
                         room["warpx"] = warpx
                         room["warpy"] = warpy
                         rooms[room_number] = room
@@ -101,9 +158,16 @@ class MapParser:
 
         return rooms
 
+    def _split_parentheses(self, line: str, convert_numbers: bool = False) -> str:
+        string = line.split("(")[1].split(")")[0]
+        if convert_numbers:
+            return tuple(int(x) for x in string.split(","))
+        else:
+            return string
+
 
 def _generate_map_data(path: str) -> dict:
-    rooms = MapParser().rooms
+    rooms = LevelParser().rooms
     with open(path, "w") as f:
         json.dump(rooms, f)
     return rooms

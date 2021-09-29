@@ -34,11 +34,12 @@ def _get_room_tileset(rx: int, ry: int) -> int:
     # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1484
     area = _get_room_area(rx, ry)
     if area == 0 or area == 1:  # World Map (defined per room)
-        pass
+        tileset = None
     elif area == 5:  # Space Station
         tileset = 0
     else:
         tileset = 1
+    return tileset
 
 
 def _get_room_area(rx: int, ry: int) -> int:

@@ -28,7 +28,7 @@ class AssetLoader:
     def __init__(self, path: str):
         self._assets = self._init_assets(path)
 
-    def _init_assets(path: str) -> zipfile.ZipFile:
+    def _init_assets(self, path: str) -> zipfile.ZipFile:
         return zipfile.ZipFile(path, "r")
 
     def load(self, filename: str):

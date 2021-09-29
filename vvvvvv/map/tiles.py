@@ -33,3 +33,7 @@ class AssetLoader:
 
     def load(self, filename: str):
         return self._assets.read(filename)
+
+
+if __name__ == "__main__":
+    TileGrabber()

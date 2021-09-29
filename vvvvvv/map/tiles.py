@@ -11,7 +11,7 @@ class TileGrabber:
         self._tilemaps = self._init_tilemaps()
 
     def _init_tilemaps(self):
-        assets = AssetLoader()
+        assets = AssetLoader(source_path)
         for filename in tilemaps:
             file = assets.load(filename)
             img = Image.open(file)

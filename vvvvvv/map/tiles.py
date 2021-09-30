@@ -11,11 +11,12 @@ class TileGrabber:
         self._tilemaps = self._init_tilemaps()
 
     def _init_tilemaps(self):
-        assets = AssetLoader(source_path)
-        for filename in tilemaps:
-            file = assets.load(filename)
-            img = Image.open(file)
-            self._tilemaps.append(img)
+        tilemaps = []
+        loader = AssetLoader(source_path)
+        for file in tilemaps:
+            img = loader.load_img(file)
+            tilemaps.append(img)
+        return tilemaps
 
     def get_tile(self, id: int, tileset: int) -> Image:
         img = self._tilemaps[tileset]
@@ -26,13 +27,11 @@ class TileGrabber:
 # TODO: Move this class to a separate module in the future to unify data access
 class AssetLoader:
     def __init__(self, path: str):
-        self._assets = self._init_assets(path)
+        self._assets = zipfile.ZipFile(path)
 
-    def _init_assets(self, path: str) -> zipfile.ZipFile:
-        return zipfile.ZipFile(path, "r")
-
-    def load(self, filename: str):
-        return self._assets.read(filename)
+    def load_img(self, filename: str) -> Image:
+        with self._assets.open(filename) as f:
+            return Image.open(f)
 
 
 if __name__ == "__main__":

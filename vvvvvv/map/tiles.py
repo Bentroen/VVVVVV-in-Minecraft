@@ -31,8 +31,8 @@ class AssetLoader:
         self._assets = zipfile.ZipFile(path)
 
     def load_img(self, filename: str) -> Image:
-        with self._assets.open(filename) as f:
-            return Image.open(f)
+        data = self._assets.open(filename)
+        return Image.open(data)
 
 
 if __name__ == "__main__":

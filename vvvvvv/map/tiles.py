@@ -27,8 +27,8 @@ class TileGrabber:
 
 # TODO: Move this class to a separate module in the future to unify data access
 class AssetLoader:
-    def __init__(self, path: str):
-        self._assets = zipfile.ZipFile(path)
+    def __init__(self):
+        self._assets = zipfile.ZipFile(source_path)
 
     def load_img(self, filename: str) -> Image:
         data = self._assets.open(filename)

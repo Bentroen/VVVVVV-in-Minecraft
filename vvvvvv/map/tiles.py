@@ -1,5 +1,6 @@
 from PIL import Image
 import zipfile
+import io
 
 source_path = "../data.zip"
 
@@ -20,8 +21,9 @@ class TileGrabber:
 
     def get_tile(self, id: int, tileset: int) -> Image:
         img = self._tilemaps[tileset]
-        x, y = divmod(id, img.width / 8)
-        return img.crop(x, y, x * 8, y * 8)
+        y, x = divmod(id, img.width / 8)
+        print(x * 8, y * 8)
+        return img.crop((x * 8, y * 8, 8, 8))
 
 
 # TODO: Move this class to a separate module in the future to unify data access

@@ -9,15 +9,14 @@ tilemaps = ["graphics/tiles.png", "graphics/tiles2.png", "graphics/tiles3.png"]
 
 class TileGrabber:
     def __init__(self):
-        self._tilemaps = self._init_tilemaps()
+        self._tilemaps = []
+        self._init_tilemaps()
 
     def _init_tilemaps(self):
-        tilemaps = []
-        loader = AssetLoader(source_path)
+        loader = AssetLoader()
         for file in tilemaps:
             img = loader.load_img(file)
-            tilemaps.append(img)
-        return tilemaps
+            self._tilemaps.append(img)
 
     def get_tile(self, id: int, tileset: int) -> Image:
         img = self._tilemaps[tileset]

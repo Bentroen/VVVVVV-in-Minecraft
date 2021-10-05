@@ -31,13 +31,13 @@ areamap = [
 
 
 def _get_room_tileset(rx: int, ry: int) -> int:
-    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1484
+    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1484-L1660
     area = _get_room_area(rx, ry)
-    if area == 0 or area == 1:  # World Map (defined per room)
-        tileset = None
-    elif area == 5:  # Space Station
+    if area == 5:  # Space Station
         tileset = 0
-    else:
+    elif area == 11:  # The Tower (entrance and exit)
+        tileset = 2
+    else:  # 0-4, 6-10 (rest of world map, final level)
         tileset = 1
     return tileset
 

@@ -145,7 +145,10 @@ class LevelParser:
                     elif line.startswith("roomtileset"):
                         tileset = int(line.split("=")[1].strip(" ").split(";")[0])
                     elif line.startswith("break"):  # End of room
-                        x, y = (int(x) for x in room_number.split(","))
+                        rx, ry = (int(x) for x in room_number.split(","))
+                        rx, ry = self._get_area_offset(path, rx, ry)
+                        # rn = rx + (ry * 100)
+
                         room["roomname"] = roomname
                         room["tiles"] = tiles
                         room["entities"] = entities
@@ -154,15 +157,42 @@ class LevelParser:
                         # For some rooms the tileset is defined on the room
                         # itself, so we only look it up in case it's not
                         room["tileset"] = (
-                            tileset if tileset else _get_room_tileset(x, y)
+                            tileset if tileset else _get_room_tileset(rx, ry)
                         )
 
                         room["warpx"] = warpx
                         room["warpy"] = warpy
-                        rooms[room_number] = room
+                        rooms[f"{rx},{ry}"] = room
                         state = "rooms"
 
         return rooms
+
+    def _get_area_offset(self, area: str, rx: int, ry: int) -> tuple[int, int]:
+        if "Finalclass.cpp" not in area:
+            # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/Finalclass.cpp#L11-L14
+            rx += 100
+            ry += 100
+
+        if "Spacestation2.cpp" in area:
+            # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/Spacestation2.cpp#L10-L14
+            rx -= 50 - 12
+            ry -= 50 - 14
+
+        elif "Labclass.cpp" in area:
+            # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/Labclass.cpp#L13-L22
+            if ry - 100 - 48 > 5:
+                rx -= 50 - 2
+                ry -= 54  # Lab
+            else:
+                rx -= 50 - 2
+                ry -= 50 - 16  # Lab
+
+        elif "WarpClass.cpp" in area:
+            # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/WarpClass.cpp#L13-L14
+            rx -= 50 - 14
+            ry -= 49  # Warp
+
+        return rx, ry
 
     def _split_parentheses(self, line: str, convert_numbers: bool = False) -> str:
         string = line.split("(")[1].split(")")[0]

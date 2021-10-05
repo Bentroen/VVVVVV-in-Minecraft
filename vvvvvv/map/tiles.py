@@ -21,8 +21,7 @@ class TileGrabber:
     def get_tile(self, id: int, tileset: int) -> Image:
         img = self._tilemaps[tileset]
         y, x = divmod(id, img.width / 8)
-        print(x * 8, y * 8)
-        return img.crop((x * 8, y * 8, 8, 8))
+        return img.crop((x * 8, y * 8, x * 8 + 8, y * 8 + 8))
 
 
 # TODO: Move this class to a separate module in the future to unify data access

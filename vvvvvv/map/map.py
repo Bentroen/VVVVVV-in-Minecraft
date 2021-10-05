@@ -98,7 +98,7 @@ class LevelParser:
                 # TODO: Do not export unnecessary properties to JSON (i.e. when warpx/y is false)
 
                 if not state:  # Find start of level data
-                    if line == "#if !defined(MAKEANDPLAY)":
+                    if line == "switch(t)":
                         state = "rooms"
 
                 elif state == "rooms":

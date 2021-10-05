@@ -69,7 +69,7 @@ class LevelParser:
     levels = [
         "Spacestation2.cpp",
         "Labclass.cpp",
-        "Warpclass.cpp",
+        "WarpClass.cpp",
         "Otherlevel.cpp",
         "Finalclass.cpp"
         # "Tower.cpp" special case - needs different handling

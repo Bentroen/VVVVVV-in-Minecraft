@@ -150,9 +150,13 @@ class LevelParser:
                         room["tiles"] = tiles
                         room["entities"] = entities
                         room["color"] = color
+
+                        # For some rooms the tileset is defined on the room
+                        # itself, so we only look it up in case it's not
                         room["tileset"] = (
                             tileset if tileset else _get_room_tileset(x, y)
                         )
+
                         room["warpx"] = warpx
                         room["warpy"] = warpy
                         rooms[room_number] = room

@@ -46,7 +46,8 @@ def _get_room_area(rx: int, ry: int) -> int:
     # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L742-L760
     # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1382-L1413
     if rx - 100 >= 0 and rx - 100 < 20 and ry - 100 >= 0 and ry - 100 < 20:
-        return areamap[rx - 100][ry - 100]
+        # world map, grab from areamap
+        return areamap[ry - 100][rx - 100]
     else:
         if rx == 49 and ry == 52:
             # entered tower 1

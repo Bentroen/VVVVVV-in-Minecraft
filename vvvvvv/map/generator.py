@@ -30,8 +30,18 @@ class MapAssembler:
         to preview room placement; not used in asset generation.
         """
 
-        map_width = 320 * 79 // rescale_factor
-        map_height = 240 * 72 // rescale_factor
+        room_numbers = [tuple(room.split(",")) for room in self._rooms.keys()]
+
+        minx = min((int(rn[0]) for rn in room_numbers))
+        maxx = max((int(rn[0]) for rn in room_numbers))
+        miny = min((int(rn[1]) for rn in room_numbers))
+        maxy = max((int(rn[1]) for rn in room_numbers))
+
+        width = maxx - minx + 1
+        height = maxy - miny + 1
+
+        map_width = 320 * width // rescale_factor
+        map_height = 240 * height // rescale_factor
 
         map_img = Image.new("RGBA", (map_width, map_height))
 
@@ -46,7 +56,7 @@ class MapAssembler:
 
             room_img = room_img.resize((new_width, new_height))
             rx, ry = (int(x) for x in room_number.split(","))
-            map_img.paste(room_img, ((rx - 41) * new_width, (ry - 48) * new_height))
+            map_img.paste(room_img, ((rx - minx) * new_width, (ry - miny) * new_height))
 
         return map_img
 

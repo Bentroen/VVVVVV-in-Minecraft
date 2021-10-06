@@ -114,6 +114,7 @@ class MapAssembler:
 
         return room_img
 
+    # TODO: Move this method to a new class in map.py that serves the room data, and grab rooms from that class instead of a dict
     def get_room(self, rx: int, ry: int) -> dict:
         """Get the room data for a room with coordinates given by `rx`,`ry`."""
 

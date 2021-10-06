@@ -91,7 +91,6 @@ class MapAssembler:
         for room_number in self._rooms:
             yield room_number, self.get_room_img(*room_number.split(","))
 
-    # TODO: Make this accept a room number and read tiles + create np array inside the function
     def get_room_img(self, rx: int, ry: int) -> Image:
         room = self.get_room(rx, ry)
         tiles = np.array(room["tiles"])

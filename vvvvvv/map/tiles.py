@@ -26,6 +26,7 @@ class TileGrabber:
 
 
 # TODO: Move this class to a separate module in the future to unify data access
+# TODO: Implement context manager to automatically close files
 class AssetLoader:
     def __init__(self):
         self._assets = zipfile.ZipFile(source_path)

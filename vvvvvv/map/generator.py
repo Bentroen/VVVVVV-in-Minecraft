@@ -1,3 +1,4 @@
+from typing import Iterator
 from PIL import Image
 import numpy as np
 
@@ -60,6 +61,32 @@ class MapAssembler:
 
         return map_img
 
+    def slice_rooms(self, cell_size: int) -> dict[str, Image.Image]:
+        """Returns a `dict` containing room numbers as keys and sliced room images as values."""
+        return {
+            rn: self.slice_room(rimg, cell_size) for rn, rimg in self.get_room_imgs()
+        }
+
+    def slice_room(self, room_img: Image.Image, cell_size: int) -> list[Image.Image]:
+        """Slices a room into a square panel with sides of `cell_size` tiles."""
+        if 30 % cell_size > 0 or 40 % cell_size > 0:
+            raise ValueError("Cell size must be a factor of 30 and 40 (1, 2, 5, 10)")
+
+        slices = []
+        panel_size = cell_size * 8
+        for y in range(30 // cell_size):
+            for x in range(40 // cell_size):
+                slice = room_img.crop(
+                    (
+                        x * panel_size,
+                        y * panel_size,
+                        x * panel_size + panel_size,
+                        y * panel_size + panel_size,
+                    )
+                )
+                slices.append(slice)
+        return slices
+
     def get_room_imgs(self) -> Iterator[tuple[str, Image.Image]]:
         for room_number, room in self._rooms.items():
             tiles = np.array(room["tiles"])
@@ -79,5 +106,11 @@ class MapAssembler:
 
 if __name__ == "__main__":
     map_builder = MapAssembler(rooms)
+
     map = map_builder.get_map_preview()
     map.save(f".cache/map.png")
+
+    slices = map_builder.slice_rooms(10)
+    for rn, slices in slices.items():
+        for i, slice in enumerate(slices):
+            slice.save(f".cache/slices/{rn.replace(',', '_')}_{i+1}.png")

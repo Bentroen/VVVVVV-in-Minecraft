@@ -32,11 +32,8 @@ class MapAssembler:
 
         map_img = Image.new("RGBA", (map_width, map_height))
 
-        for room_number, room in rooms.items():
+        for room_number, room_img in self.get_room_imgs(rooms):
             print(f"Processing room {room_number}")
-            tiles = np.array(room["tiles"])
-            tileset = room["tileset"]
-            room_img = self.get_room_img(tiles, tileset)
 
             if CACHE_ROOMS:
                 room_img.save(f".cache/rooms/{room_number}.png")
@@ -49,6 +46,12 @@ class MapAssembler:
             map_img.paste(room_img, ((rx - 41) * new_width, (ry - 48) * new_height))
 
         return map_img
+
+    def get_room_imgs(self, rooms: dict) -> Iterator[tuple[str, Image.Image]]:
+        for room_number, room in rooms.items():
+            tiles = np.array(room["tiles"])
+            tileset = room["tileset"]
+            yield room_number, self.get_room_img(tiles, tileset)
 
     def get_room_img(self, tiles: np.array, tileset: int) -> Image:
         room = Image.new("RGBA", (320, 240))

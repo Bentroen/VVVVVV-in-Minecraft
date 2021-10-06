@@ -1,8 +1,8 @@
-from map import fetch_map_data
-from tiles import TileGrabber
-
 from PIL import Image
 import numpy as np
+
+from map import fetch_map_data
+from tiles import TileGrabber
 
 
 CACHE_ROOMS = True

@@ -182,7 +182,7 @@ class LevelParser:
         return rooms
 
     def _get_area_offset(self, area: str, rx: int, ry: int) -> tuple[int, int]:
-        """Return the x,y offset for each room in the default map."""
+        """Return the room coordinates with that room's offset applied."""
 
         if "Finalclass.cpp" not in area:
             # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/Finalclass.cpp#L11-L14

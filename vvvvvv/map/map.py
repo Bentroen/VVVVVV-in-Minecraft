@@ -87,8 +87,10 @@ class LevelParser:
         self.rooms = self._parse_files()
 
     def _parse_files(self) -> dict[str, dict]:
-        """Parse all files containing levels in the game's source. Returns a `dict`
-        containing strings in the form `rx,ry` as keys and a room data `dict` as values."""
+        """
+        Parse all files containing levels in the game's source. Returns a `dict`
+        containing strings in the form `rx,ry` as keys and a room data `dict` as values.
+        """
 
         areas = {}
         for level in self.levels:

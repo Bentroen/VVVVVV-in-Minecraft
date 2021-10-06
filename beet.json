@@ -1,0 +1,17 @@
+{
+    "data_pack": {
+        "name": "vvvvvv",
+        "load": ["src"]
+
+    },
+    "resource_pack": {
+        "name": "vvvvvv",
+        "load": ["assets"]
+    },
+    "pipeline": [
+        "vvvvvv.map.generate"
+    ],
+    "meta": {
+        "generate_rooms": true
+    }
+}

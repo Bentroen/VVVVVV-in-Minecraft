@@ -21,7 +21,10 @@ class MapAssembler:
     Assembles room images from room tilemaps, tilesets and tile images.
     """
 
-    def get_map_preview(self, rooms: dict, rescale_factor: int = 8) -> Image:
+    def __init__(self, rooms: dict):
+        self._rooms = rooms
+
+    def get_map_preview(self, rescale_factor: int = 8) -> Image:
         """
         Creates a large image containing all rooms. Only meant
         to preview room placement; not used in asset generation.
@@ -32,7 +35,7 @@ class MapAssembler:
 
         map_img = Image.new("RGBA", (map_width, map_height))
 
-        for room_number, room_img in self.get_room_imgs(rooms):
+        for room_number, room_img in self.get_room_imgs():
             print(f"Processing room {room_number}")
 
             if CACHE_ROOMS:
@@ -47,8 +50,8 @@ class MapAssembler:
 
         return map_img
 
-    def get_room_imgs(self, rooms: dict) -> Iterator[tuple[str, Image.Image]]:
-        for room_number, room in rooms.items():
+    def get_room_imgs(self) -> Iterator[tuple[str, Image.Image]]:
+        for room_number, room in self._rooms.items():
             tiles = np.array(room["tiles"])
             tileset = room["tileset"]
             yield room_number, self.get_room_img(tiles, tileset)
@@ -65,6 +68,6 @@ class MapAssembler:
 
 
 if __name__ == "__main__":
-    map_builder = MapAssembler()
-    map = map_builder.get_map_preview(rooms)
+    map_builder = MapAssembler(rooms)
+    map = map_builder.get_map_preview()
     map.save(f".cache/map.png")

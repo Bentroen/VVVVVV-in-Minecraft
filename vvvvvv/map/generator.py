@@ -62,13 +62,15 @@ class MapAssembler:
         return map_img
 
     def slice_rooms(self, cell_size: int) -> dict[str, Image.Image]:
-        """Returns a `dict` containing room numbers as keys and sliced room images as values."""
+        """Return a `dict` containing room numbers as keys and sliced room images as values."""
+
         return {
             rn: self.slice_room(rimg, cell_size) for rn, rimg in self.get_room_imgs()
         }
 
     def slice_room(self, room_img: Image.Image, cell_size: int) -> list[Image.Image]:
-        """Slices a room into a square panel with sides of `cell_size` tiles."""
+        """Slice a room into a square panel with sides of `cell_size` tiles."""
+
         if 30 % cell_size > 0 or 40 % cell_size > 0:
             raise ValueError("Cell size must be a factor of 30 and 40 (1, 2, 5, 10)")
 
@@ -88,10 +90,17 @@ class MapAssembler:
         return slices
 
     def get_room_imgs(self) -> Iterator[tuple[str, Image.Image]]:
+        """
+        Generator that yields `tuple`s containing the room number, and images for
+        all rooms in this map.
+        """
+
         for room_number in self._rooms:
             yield room_number, self.get_room_img(*room_number.split(","))
 
     def get_room_img(self, rx: int, ry: int) -> Image:
+        """Get the room image for a room with coordinates given by `rx`,`ry`."""
+
         room = self.get_room(rx, ry)
         tiles = np.array(room["tiles"])
         tileset = room["tileset"]
@@ -105,7 +114,9 @@ class MapAssembler:
 
         return room_img
 
-    def get_room(self, rx: int, ry: int):
+    def get_room(self, rx: int, ry: int) -> dict:
+        """Get the room data for a room with coordinates given by `rx`,`ry`."""
+
         return self._rooms[f"{rx},{ry}"]
 
 

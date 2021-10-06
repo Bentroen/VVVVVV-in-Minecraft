@@ -2,7 +2,7 @@ import os
 import json
 
 
-source_path = "../../VVVVVV-master/desktop_version/src"
+source_path = "../VVVVVV-master/desktop_version/src"
 
 
 # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L88-L110
@@ -242,7 +242,7 @@ def fetch_map_data(force_update: bool = False) -> dict[str, dict]:
     regenerated; otherwise, it's retrieved from the cache.
     """
 
-    outpath = os.path.join(".cache", "map.json")
+    outpath = os.path.join("vvvvvv", ".cache", "map.json")
     if force_update:
         return _generate_map_data(outpath)
     else:

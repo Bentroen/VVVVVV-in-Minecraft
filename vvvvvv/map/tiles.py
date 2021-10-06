@@ -1,6 +1,6 @@
 from PIL import Image
 import zipfile
-import io
+
 
 source_path = "../data.zip"
 

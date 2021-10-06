@@ -13,10 +13,6 @@ rooms = fetch_map_data()
 tile_loader = TileGrabber()
 
 
-class RoomGenerator:
-    pass
-
-
 class MapAssembler:
     """
     Assembles room images from room tilemaps, tilesets and tile images.

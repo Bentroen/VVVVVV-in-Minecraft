@@ -31,7 +31,10 @@ areamap = [
 
 
 def _get_room_tileset(rx: int, ry: int) -> int:
+    """Return the tileset (0-2) for a room with coordinates given by `rx`,`ry`."""
+
     # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1484-L1660
+
     area = _get_room_area(rx, ry)
     if area == 5:  # Space Station
         tileset = 0
@@ -43,8 +46,11 @@ def _get_room_tileset(rx: int, ry: int) -> int:
 
 
 def _get_room_area(rx: int, ry: int) -> int:
+    """Return the area (0-11) for a room with coordinates given by `rx`,`ry`."""
+
     # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L742-L760
     # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1382-L1413
+
     if rx - 100 >= 0 and rx - 100 < 20 and ry - 100 >= 0 and ry - 100 < 20:
         # world map, grab from areamap
         return areamap[ry - 100][rx - 100]
@@ -66,6 +72,7 @@ def _get_room_area(rx: int, ry: int) -> int:
 
 
 class LevelParser:
+    """Parse VVVVVV's `.cpp` files to extract level data, such as tiles and entities."""
 
     levels = [
         "Spacestation2.cpp",
@@ -79,7 +86,10 @@ class LevelParser:
     def __init__(self):
         self.rooms = self._parse_files()
 
-    def _parse_files(self) -> dict:
+    def _parse_files(self) -> dict[str, dict]:
+        """Parse all files containing levels in the game's source. Returns a `dict`
+        containing strings in the form `rx,ry` as keys and a room data `dict` as values."""
+
         areas = {}
         for level in self.levels:
             path = os.path.join(source_path, level)
@@ -87,6 +97,8 @@ class LevelParser:
         return areas
 
     def _parse_file(self, path: str) -> dict:
+        """Parse an individual file. Returns a `dict` containing the room data."""
+
         rooms = {}
         state = None
         with open(path) as f:
@@ -168,6 +180,8 @@ class LevelParser:
         return rooms
 
     def _get_area_offset(self, area: str, rx: int, ry: int) -> tuple[int, int]:
+        """Return the x,y offset for each room in the default map."""
+
         if "Finalclass.cpp" not in area:
             # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/Finalclass.cpp#L11-L14
             rx += 100
@@ -195,6 +209,12 @@ class LevelParser:
         return rx, ry
 
     def _split_parentheses(self, line: str, convert_numbers: bool = False) -> str:
+        """
+        Get the contents tuple containing the values inside parenthesis for strings in
+        the form `prefix(value1, value2, value3...)`. If `convert_numbers` is `True`,
+        return a tuple of the values split by commas (`,`); otherwise, return a string.
+        """
+
         string = line.split("(")[1].split(")")[0]
         if convert_numbers:
             return tuple(int(x) for x in string.split(","))
@@ -202,14 +222,24 @@ class LevelParser:
             return string
 
 
-def _generate_map_data(path: str) -> dict:
+def _generate_map_data(path: str) -> dict[str, dict]:
+    """
+    Regenerate the map data and save it to the cache. Returns a `dict` with strings in
+    the form `rx,ry` for keys and `dict`s containing the room data as values.
+    """
+
     rooms = LevelParser().rooms
     with open(path, "w") as f:
         json.dump(rooms, f)
     return rooms
 
 
-def fetch_map_data(force_update: bool = False) -> dict:
+def fetch_map_data(force_update: bool = False) -> dict[str, dict]:
+    """
+    Get the map data. If `force_update` is `True` OR the cache is not found, the data is
+    regenerated; otherwise, it's retrieved from the cache.
+    """
+
     outpath = os.path.join(".cache", "map.json")
     if force_update:
         return _generate_map_data(outpath)

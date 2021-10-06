@@ -21,7 +21,7 @@ class MapAssembler:
     Assembles room images from room tilemaps, tilesets and tile images.
     """
 
-    def create_map_img(self, rooms: dict, rescale_factor: int = 8) -> Image:
+    def get_map_preview(self, rooms: dict, rescale_factor: int = 8) -> Image:
         """
         Creates a large image containing all rooms. Only meant
         to preview room placement; not used in asset generation.
@@ -66,5 +66,5 @@ class MapAssembler:
 
 if __name__ == "__main__":
     map_builder = MapAssembler()
-    map = map_builder.create_map_img(rooms)
+    map = map_builder.get_map_preview(rooms)
     map.save(f".cache/map.png")

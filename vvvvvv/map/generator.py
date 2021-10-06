@@ -88,20 +88,26 @@ class MapAssembler:
         return slices
 
     def get_room_imgs(self) -> Iterator[tuple[str, Image.Image]]:
-        for room_number, room in self._rooms.items():
-            tiles = np.array(room["tiles"])
-            tileset = room["tileset"]
-            yield room_number, self.get_room_img(tiles, tileset)
+        for room_number in self._rooms:
+            yield room_number, self.get_room_img(*room_number.split(","))
 
-    def get_room_img(self, tiles: np.array, tileset: int) -> Image:
-        room = Image.new("RGBA", (320, 240))
+    # TODO: Make this accept a room number and read tiles + create np array inside the function
+    def get_room_img(self, rx: int, ry: int) -> Image:
+        room = self.get_room(rx, ry)
+        tiles = np.array(room["tiles"])
+        tileset = room["tileset"]
+
+        room_img = Image.new("RGBA", (320, 240))
 
         for y, x in np.ndindex(tiles.shape):
             id = int(tiles[y, x])
             tile = tile_loader.get_tile(id, tileset)
-            room.paste(tile, (x * 8, y * 8))
+            room_img.paste(tile, (x * 8, y * 8))
 
-        return room
+        return room_img
+
+    def get_room(self, rx: int, ry: int):
+        return self._rooms[f"{rx},{ry}"]
 
 
 if __name__ == "__main__":

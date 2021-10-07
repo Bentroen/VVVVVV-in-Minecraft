@@ -71,6 +71,47 @@ def _get_room_area(rx: int, ry: int) -> int:
             return 6
 
 
+def tile_is_solid(tileset: int, tile: int) -> bool:
+    # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Map.cpp#L682-L731
+
+    if (
+        tile == 1
+        or (tileset == 0 and tile == 59)
+        or (tile >= 80 and tile < 680)
+        or (tileset == 1 and tile == 740)
+    ):
+        return True
+    else:
+        return False
+
+
+def tile_type(tileset: int, tile: int) -> str:
+    # Extends `tile_is_solid` to tell if a non-solid tile is a spike as well.
+    # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Map.cpp#L682-L731
+
+    if tile_is_solid(tile, tileset):
+        return "wall"
+    else:
+
+        if tileset == 1:
+            if (
+                (tile >= 6 and tile <= 9)
+                or (tile >= 49 and tile <= 50)
+                or (tile >= 1080 and tile <= 1085)
+                or (tile >= 1120 and tile <= 1125)
+                or (tile >= 1160 and tile <= 1165)
+            ):
+                return "spike"
+            else:
+                return "background"
+
+        elif tileset == 2:
+            if (tile >= 6 and tile <= 9) or (tile >= 49 and tile <= 80):
+                return "spike"
+            else:
+                return "background"
+
+
 class LevelParser:
     """Parse VVVVVV's `.cpp` files to extract level data, such as tiles and entities."""
 

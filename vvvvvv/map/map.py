@@ -8,7 +8,7 @@ source_path = "../VVVVVV-master/desktop_version/src"
 def _get_room_area(rx: int, ry: int) -> int:
     """Return the area (0-11) for a room with coordinates given by `rx`,`ry`."""
 
-    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L88-L110
+    # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Map.cpp#L88-L110
 
     areamap = [
         [1, 2, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4],
@@ -33,9 +33,9 @@ def _get_room_area(rx: int, ry: int) -> int:
         [2, 2, 2, 2, 2, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
-    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L742-L760
-    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1382-L1413
-    
+    # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Map.cpp#L742-L760
+    # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Map.cpp#L1382-L1413
+
     if rx - 100 >= 0 and rx - 100 < 20 and ry - 100 >= 0 and ry - 100 < 20:
         # world map, grab from areamap
         return areamap[ry - 100][rx - 100]
@@ -59,7 +59,7 @@ def _get_room_area(rx: int, ry: int) -> int:
 def _get_room_tileset(rx: int, ry: int) -> int:
     """Return the tileset (0-2) for a room with coordinates given by `rx`,`ry`."""
 
-    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1484-L1660
+    # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Map.cpp#L1484-L1660
 
     area = _get_room_area(rx, ry)
     if area == 5:  # Space Station
@@ -226,17 +226,17 @@ class LevelParser:
         """Return the room coordinates with that room's offset applied."""
 
         if "Finalclass.cpp" not in area:
-            # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/Finalclass.cpp#L11-L14
+            # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Finalclass.cpp#L11-L14
             rx += 100
             ry += 100
 
         if "Spacestation2.cpp" in area:
-            # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/Spacestation2.cpp#L10-L14
+            # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Spacestation2.cpp#L10-L14
             rx -= 50 - 12
             ry -= 50 - 14
 
         elif "Labclass.cpp" in area:
-            # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/Labclass.cpp#L13-L22
+            # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Labclass.cpp#L13-L22
             if ry - 100 - 48 > 5:
                 rx -= 50 - 2
                 ry -= 54  # Lab
@@ -245,7 +245,7 @@ class LevelParser:
                 ry -= 50 - 16  # Lab
 
         elif "WarpClass.cpp" in area:
-            # https://github.com/TerryCavanagh/VVVVVV/blob/038f15f4a61826205b5008b6cb3a7a909b21c23e/desktop_version/src/WarpClass.cpp#L13-L14
+            # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/WarpClass.cpp#L13-L14
             rx -= 50 - 14
             ry -= 49  # Warp
 

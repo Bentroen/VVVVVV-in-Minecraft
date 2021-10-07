@@ -4,6 +4,13 @@ from .image import MapAssembler
 from .map import fetch_map_data
 
 
+# TODO: Room placement functions
+# TODO: Animated tiles
+# TODO: Background separation
+# TODO: Remove transparent slices from the pack, and possibly add deduplication
+# TODO: Map each room's coordinates to a position in a stack (for placing collision maps)
+# TODO: Add collision maps (map spikes, backgrounds and solid blocks)
+
 def beet_default(ctx: Context):
 
     image = MapAssembler(fetch_map_data())

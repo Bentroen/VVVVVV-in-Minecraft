@@ -5,52 +5,37 @@ import json
 source_path = "../VVVVVV-master/desktop_version/src"
 
 
-# https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L88-L110
-areamap = [
-    [1, 2, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4],
-    [1, 2, 2, 2, 2, 2, 2, 0, 0, 3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4],
-    [0, 1, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4],
-    [0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 5, 5, 5, 5, 4, 4, 4, 4],
-    [0, 0, 2, 2, 2, 0, 0, 0, 0, 3, 11, 11, 5, 5, 5, 5, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 11, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 5, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 0, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 0, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 0, 0, 0, 0, 0, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 2, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [2, 2, 2, 2, 2, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [2, 2, 2, 2, 2, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-]
-
-
-def _get_room_tileset(rx: int, ry: int) -> int:
-    """Return the tileset (0-2) for a room with coordinates given by `rx`,`ry`."""
-
-    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1484-L1660
-
-    area = _get_room_area(rx, ry)
-    if area == 5:  # Space Station
-        tileset = 0
-    elif area == 11:  # The Tower (entrance and exit)
-        tileset = 2
-    else:  # 0-4, 6-10 (rest of world map, final level)
-        tileset = 1
-    return tileset
-
-
 def _get_room_area(rx: int, ry: int) -> int:
     """Return the area (0-11) for a room with coordinates given by `rx`,`ry`."""
 
+    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L88-L110
+
+    areamap = [
+        [1, 2, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4],
+        [1, 2, 2, 2, 2, 2, 2, 0, 0, 3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4],
+        [0, 1, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4],
+        [0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 5, 5, 5, 5, 4, 4, 4, 4],
+        [0, 0, 2, 2, 2, 0, 0, 0, 0, 3, 11, 11, 5, 5, 5, 5, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 11, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 5, 5, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 0, 5, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 5, 5, 5, 5, 0, 5, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 5, 5, 0, 0, 0, 0, 0, 5, 0],
+        [0, 0, 0, 0, 0, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 2, 2, 2, 2, 2, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [2, 2, 2, 2, 2, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [2, 2, 2, 2, 2, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+
     # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L742-L760
     # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1382-L1413
-
+    
     if rx - 100 >= 0 and rx - 100 < 20 and ry - 100 >= 0 and ry - 100 < 20:
         # world map, grab from areamap
         return areamap[ry - 100][rx - 100]
@@ -69,6 +54,21 @@ def _get_room_area(rx: int, ry: int) -> int:
             t = 10
         else:
             return 6
+
+
+def _get_room_tileset(rx: int, ry: int) -> int:
+    """Return the tileset (0-2) for a room with coordinates given by `rx`,`ry`."""
+
+    # https://github.com/TerryCavanagh/VVVVVV/blob/3decf54dbc9e7898a980086dc34a1bfbb52b16ac/desktop_version/src/Map.cpp#L1484-L1660
+
+    area = _get_room_area(rx, ry)
+    if area == 5:  # Space Station
+        tileset = 0
+    elif area == 11:  # The Tower (entrance and exit)
+        tileset = 2
+    else:  # 0-4, 6-10 (rest of world map, final level)
+        tileset = 1
+    return tileset
 
 
 def tile_is_solid(tileset: int, tile: int) -> bool:

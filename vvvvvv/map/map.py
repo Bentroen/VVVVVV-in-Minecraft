@@ -112,6 +112,71 @@ def tile_type(tileset: int, tile: int) -> str:
                 return "background"
 
 
+def get_room_stack_position(rx: int, ry: int) -> tuple[int, int]:
+    """Map every room in the world map to a position in one of three stacks.
+    "Related" rooms are grouped in the same stack. Useful to store rooms in
+    a linear structure without gaps.
+    """
+
+    # Custom function. Used to determine the location of collision maps inside the world
+
+    if rx >= 100 and rx < 120:
+        if rx <= 108:  # World Map (left of The Tower)
+            stack = 0
+            index = (ry - 100) * 8 + (rx - 100)
+
+        else:  # World Map (right of The Tower)
+            stack = 1
+            index = (ry - 100) * 10 + (rx - 110)
+
+    else:
+        stack = 2
+        if ry == 56 and rx >= 41 and rx <= 54:  # Intermission 1
+            index = rx - 41
+        elif rx == 53 and ry >= 48 and ry <= 52:  # Intermission 2
+            index = 14 + (ry - 48)
+        else:  # Final level
+            # Order of rooms when you first visit them, without repetition
+            order = [
+                (46, 54),
+                (47, 54),
+                (48, 54),
+                (49, 54),
+                (50, 54),
+                (50, 53),
+                (50, 52),
+                (50, 51),
+                (49, 51),
+                (48, 51),
+                (47, 51),
+                (46, 51),
+                (45, 51),
+                (44, 51),
+                (43, 51),
+                (42, 51),
+                (41, 51),
+                (41, 52),
+                (42, 52),
+                (43, 52),
+                (44, 52),
+                (45, 52),
+                (47, 52),
+                (48, 52),
+                (52, 53),
+                (53, 53),
+                (54, 53),
+                (54, 52),
+                (54, 51),
+                (54, 50),
+                (54, 49),
+                (54, 48),
+                (54, 47),
+            ]
+            index = 19 + order.index((rx, ry))
+
+    return stack, index
+
+
 class LevelParser:
     """Parse VVVVVV's `.cpp` files to extract level data, such as tiles and entities."""
 

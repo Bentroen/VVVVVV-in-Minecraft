@@ -89,7 +89,7 @@ def tile_type(tileset: int, tile: int) -> str:
     # Extends `tile_is_solid` to tell if a non-solid tile is a spike as well.
     # https://github.com/TerryCavanagh/VVVVVV/blob/2.3.4/desktop_version/src/Map.cpp#L682-L731
 
-    if tile_is_solid(tile, tileset):
+    if tile_is_solid(tileset, tile):
         return "wall"
     else:
 

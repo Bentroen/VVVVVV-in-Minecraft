@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 import json
 
 
@@ -223,7 +223,7 @@ class LevelParser:
 
         areas = {}
         for level in self.levels:
-            path = os.path.join(source_path, level)
+            path = Path(source_path, level)
             areas.update(self._parse_file(path))
         return areas
 
@@ -288,7 +288,7 @@ class LevelParser:
                         tileset = int(line.split("=")[1].strip(" ").split(";")[0])
                     elif line.startswith("break"):  # End of room
                         rx, ry = (int(x) for x in room_number.split(","))
-                        rx, ry = self._get_area_offset(path, rx, ry)
+                        rx, ry = self._get_area_offset(str(path), rx, ry)
                         # rn = rx + (ry * 100)
 
                         room = {
@@ -380,7 +380,7 @@ def fetch_map_data(force_update: bool = False) -> dict[str, dict]:
     regenerated; otherwise, it's retrieved from the cache.
     """
 
-    outpath = os.path.join("vvvvvv", ".cache", "map.json")
+    outpath = Path("vvvvvv/.cache/map.json")
     if force_update:
         return _generate_map_data(outpath)
     else:

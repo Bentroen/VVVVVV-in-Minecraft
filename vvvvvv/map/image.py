@@ -2,14 +2,13 @@ from typing import Iterator
 from PIL import Image
 import numpy as np
 
-from .map_data import fetch_map_data
 from .tiles import TileGrabber
 
 
 CACHE_ROOMS = True
 CACHE_MAP = True
 
-rooms = fetch_map_data()
+
 tile_loader = TileGrabber()
 
 
@@ -118,11 +117,16 @@ class MapAssembler:
 
 
 if __name__ == "__main__":
-    map_builder = MapAssembler(rooms)
+    from .map_data import fetch_map_data
 
+    rooms = fetch_map_data()
+
+    # Build map
+    map_builder = MapAssembler(rooms)
     map = map_builder.get_map_preview()
     map.save(f".cache/map.png")
 
+    # Build rooms
     slices = map_builder.slice_rooms(10)
     for rn, slices in slices.items():
         for i, slice in enumerate(slices):

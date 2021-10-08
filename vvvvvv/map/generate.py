@@ -21,22 +21,21 @@ def beet_default(ctx: Context):
 
     rooms = map_data.fetch_map_data()
 
-    for id, model, texture in ModelGenerator.generate(rooms):
+    modelgen = ModelGenerator()
+    for id, model, texture in modelgen.generate(rooms):
         ctx.assets[f"vvvvvv:rooms/{id}"] = model
         ctx.assets[f"vvvvvv:rooms/{id}"] = texture
+    ctx.assets["minecraft:item/diamond_hoe"] = modelgen.get_multipart()
 
-    ctx.assets["minecraft:item/diamond_hoe"] = ModelGenerator.get_multipart()
-
-    structure = CollisionGenerator.generate(rooms, ctx)
+    structure = CollisionGenerator().generate(rooms)
     ctx.data["vvvvvv:map_collision"] = structure
 
 
 class ModelGenerator:
-    def __init__(self, rooms):
+    def __init__(self):
         self._multipart = self._get_multipart_base()
 
-    @classmethod
-    def generate(cls, rooms: dict) -> Iterator[tuple[str, Model, Texture]]:
+    def generate(self, rooms: dict) -> Iterator[tuple[str, Model, Texture]]:
         image = MapAssembler(rooms)
         sliced_rooms = image.slice_rooms(10)
 
@@ -47,35 +46,30 @@ class ModelGenerator:
                 id = f"{rx}_{ry}_{slice_count}"
                 filename = f"vvvvvv:rooms/{id}"
                 texture = Texture(slice)
-                model = Model(cls._get_base_model(filename))
+                model = Model(self._get_base_model(filename))
 
                 yield id, texture, model
 
                 cmd = room_count * 12 + slice_count + 1
-                cls._multipart["overrides"].append(
-                    cls._get_multipart_predicate(cmd, filename)
+                self._multipart["overrides"].append(
+                    self._get_multipart_predicate(cmd, filename)
                 )
-    
-    @classmethod
-    def get_multipart(cls) -> Model:
-        return Model(cls._multipart())
 
-    @classmethod
-    def _get_base_model(cls, texture: str) -> dict:
+    def get_multipart(self) -> Model:
+        return Model(self._multipart)
+
+    def _get_base_model(self, texture: str) -> dict:
         return {"parent": "vvvvvv:base/10x10", "textures": {"texture": texture}}
 
-    @classmethod
-    def _get_multipart_base(cls) -> dict:
+    def _get_multipart_base(self) -> dict:
         return {"parent": "vvvvvv:base/10x10", "overrides": []}
 
-    @classmethod
-    def _get_multipart_predicate(cls, cmd: int, model: str) -> dict:
+    def _get_multipart_predicate(self, cmd: int, model: str) -> dict:
         return {"predicate": {"custom_model_data": cmd}, "model": model}
 
 
 class CollisionGenerator:
-    @classmethod
-    def generate(cls, rooms: dict) -> Structure:
+    def generate(self, rooms: dict) -> Structure:
         max_height = max(
             map_data.get_room_stack_position(*tuple(int(x) for x in room.split(",")))[1]
             for room in rooms
@@ -112,10 +106,9 @@ class CollisionGenerator:
 
                     blocks[x, y, z] = block
 
-        return cls._get_structure(blocks)
+        return self._get_structure(blocks)
 
-    @classmethod
-    def _get_structure(cls, blocks: np.array) -> Structure:
+    def _get_structure(self, blocks: np.array) -> Structure:
         """Return a `Structure` for the blocks in the input array."""
 
         return Structure(

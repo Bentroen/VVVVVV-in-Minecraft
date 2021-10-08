@@ -241,7 +241,7 @@ class LevelParser:
 
                 elif state == "tiles":
                     if line != "};":  # Tile row
-                        row = line.strip(",").split(",")
+                        row = [int(x) for x in line.strip(",").split(",")]
                         tiles.append(row)
                     else:  # End of tilemap
                         state = "entities"

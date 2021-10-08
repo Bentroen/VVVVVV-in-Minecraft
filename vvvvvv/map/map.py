@@ -91,9 +91,9 @@ def tile_type(tileset: int, tile: int) -> str:
 
     if tile_is_solid(tileset, tile):
         return "wall"
-    else:
 
-        if tileset == 1:
+    else:
+        if tileset == 0:
             if (
                 (tile >= 6 and tile <= 9)
                 or (tile >= 49 and tile <= 50)
@@ -105,7 +105,7 @@ def tile_type(tileset: int, tile: int) -> str:
             else:
                 return "background"
 
-        elif tileset == 2:
+        elif tileset == 1:
             if (tile >= 6 and tile <= 9) or (tile >= 49 and tile <= 80):
                 return "spike"
             else:

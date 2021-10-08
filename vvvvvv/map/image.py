@@ -2,7 +2,7 @@ from typing import Iterator
 from PIL import Image
 import numpy as np
 
-from .map import fetch_map_data
+from .map_data import fetch_map_data
 from .tiles import TileGrabber
 
 

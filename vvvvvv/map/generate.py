@@ -1,7 +1,7 @@
 from beet import Context, Texture, Model
 
 from .image import MapAssembler
-from .map import fetch_map_data
+from . import map_data
 
 
 # TODO: Room placement functions

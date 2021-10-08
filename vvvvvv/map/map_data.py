@@ -189,8 +189,31 @@ class LevelParser:
         # "Tower.cpp" special case - needs different handling
     ]
 
+    # Completely empty rooms (no tiles, entities or name) aren't defined in the game,
+    # but tracking them explicitly will make our lives a bit easier.
+    empty_rooms = [
+        (101, 107),
+        (102, 107),
+        (104, 106),
+        (104, 108),
+        (106, 103),
+        (107, 112),
+        (107, 113),
+        (111, 107),  # Super Gravitron
+        (111, 115),
+        (112, 115),
+        (114, 115),
+        (115, 115),
+        (116, 115),
+        (116, 116),
+        (116, 118),
+        (118, 116),
+        (118, 118),
+    ]
+
     def __init__(self):
         self.rooms = self._parse_files()
+        self._add_empty_rooms()
 
     def _parse_files(self) -> dict[str, dict]:
         """
@@ -286,6 +309,12 @@ class LevelParser:
                         state = "rooms"
 
         return rooms
+
+    def _add_empty_rooms(self):
+        for rx, ry in self.empty_rooms:
+            self.rooms[f"{rx},{ry}"] = {
+                "tiles": [[0 for i in range(40)] for j in range(30)]
+            }
 
     def _get_area_offset(self, area: str, rx: int, ry: int) -> tuple[int, int]:
         """Return the room coordinates with that room's offset applied."""

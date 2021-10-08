@@ -251,7 +251,6 @@ class LevelParser:
                         "static const short contents"
                     ):  # New room begins
                         state = "tiles"
-                        room = {}
                         tiles = []
                         entities = []
                         color = 0
@@ -292,19 +291,22 @@ class LevelParser:
                         rx, ry = self._get_area_offset(path, rx, ry)
                         # rn = rx + (ry * 100)
 
-                        room["roomname"] = roomname
-                        room["tiles"] = tiles
-                        room["entities"] = entities
-                        room["color"] = color
+                        room = {
+                            "roomname": roomname,
+                            "tiles": tiles,
+                            "entities": entities,
+                            "color": color,
+                            "tileset": (
+                                # For some rooms the tileset is defined on the room
+                                # itself, so we only look it up in case it's not
+                                tileset
+                                if tileset
+                                else _get_room_tileset(rx, ry)
+                            ),
+                            "warpx": warpx,
+                            "warpy": warpy,
+                        }
 
-                        # For some rooms the tileset is defined on the room
-                        # itself, so we only look it up in case it's not
-                        room["tileset"] = (
-                            tileset if tileset else _get_room_tileset(rx, ry)
-                        )
-
-                        room["warpx"] = warpx
-                        room["warpy"] = warpy
                         rooms[f"{rx},{ry}"] = room
                         state = "rooms"
 

@@ -313,7 +313,8 @@ class LevelParser:
     def _add_empty_rooms(self):
         for rx, ry in self.empty_rooms:
             self.rooms[f"{rx},{ry}"] = {
-                "tiles": [[0 for i in range(40)] for j in range(30)]
+                "tiles": [[0 for i in range(40)] for j in range(30)],
+                "tileset": _get_room_tileset(rx, ry),
             }
 
     def _get_area_offset(self, area: str, rx: int, ry: int) -> tuple[int, int]:

@@ -10,6 +10,11 @@ from . import map_data
 # TODO: Animated tiles
 # TODO: Background separation
 # TODO: Remove transparent slices from the pack, and possibly add deduplication
+# TODO: Load towers
+# TODO: Create alt versions for rooms in final level with tile changes
+# TODO: (as well as those that change on time trials etc.)
+# TODO: Think about flip mode?
+
 
 def beet_default(ctx: Context):
 

@@ -60,6 +60,17 @@ class MapAssembler:
     def slice_rooms_deduplicated(
         self, cell_size: int, numeric_indices: bool = True
     ) -> tuple[dict[str, Image.Image], dict[str, str]]:
+        """Slice rooms into a square panel with sides of `cell_size` tiles. Identical
+        slices are deduplicated, so the data for each unique slice is only stored once.
+        Returns two `dict`s, the first one mapping slice hashes to `Image` objects, and
+        the second mapping room numbers to a list of hashes corresponding to each slice
+        in this room.
+
+        If `numeric_indices` is `True`, each unique slice will be identified with a number
+        assigned to it, sequentially, the moment it first appears. Otherwise, slices will
+        be indexed by their hash.
+        """
+
         unique_hashes = []
         hashmap = {}
         rooms = {}

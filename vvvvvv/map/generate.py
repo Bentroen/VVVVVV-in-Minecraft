@@ -10,7 +10,6 @@ from . import map_data
 # TODO: Room placement functions
 # TODO: Animated tiles
 # TODO: Background separation
-# TODO: Remove transparent slices from the pack, and possibly add deduplication
 # TODO: Load towers
 # TODO: Create alt versions for rooms in final level with tile changes
 # TODO: (as well as those that change on time trials etc.)
@@ -37,18 +36,21 @@ class ModelGenerator:
 
     def generate(self, rooms: dict) -> Iterator[tuple[str, Model, Texture]]:
         image = MapAssembler(rooms)
-        sliced_rooms = image.slice_rooms(10)
+        slices, sliced_rooms = image.slice_rooms_deduplicated(10)
 
-        for room_count, (room_number, slices) in enumerate(sliced_rooms.items()):
+        for room_count, (room_number, slice_hashes) in enumerate(sliced_rooms.items()):
             rx, ry = tuple(int(x) for x in room_number.split(","))
 
-            for slice_count, slice in enumerate(slices):
+            print(f"Processing room {room_count+1}")
+
+            for slice_count, hash in enumerate(slice_hashes):
+
                 id = f"{rx}_{ry}_{slice_count}"
-                filename = f"vvvvvv:rooms/{id}"
-                texture = Texture(slice)
+                filename = f"vvvvvv:rooms/{hash}"
+                texture = Texture(slices[hash])
                 model = Model(self._get_base_model(filename))
 
-                yield id, texture, model
+                yield hash, texture, model
 
                 cmd = room_count * 12 + slice_count + 1
                 self._multipart["overrides"].append(
@@ -127,3 +129,8 @@ class CollisionGenerator:
                 ],
             }
         )
+
+
+# class LoadFunctionGenerator:
+
+#    yield Function()

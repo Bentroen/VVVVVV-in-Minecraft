@@ -1,3 +1,4 @@
+import hashlib
 from typing import Iterator
 from PIL import Image
 import numpy as np
@@ -55,6 +56,28 @@ class MapAssembler:
             map_img.paste(room_img, ((rx - minx) * new_width, (ry - miny) * new_height))
 
         return map_img
+
+    def slice_rooms_deduplicated(
+        self, cell_size: int
+    ) -> tuple[dict[str, Image.Image], dict[str, str]]:
+        visited_hashes = set()
+        hashmap = {}
+        rooms = {}
+
+        for rn, slices in self.slice_rooms(cell_size).items():
+            slice_hashes = []
+
+            for slice in slices:
+                hash = hashlib.md5(slice.tobytes()).hexdigest()
+                if hash not in visited_hashes:
+                    visited_hashes.add(hash)
+                    hashmap[hash] = slice
+
+                slice_hashes.append(hash)
+
+            rooms[rn] = slice_hashes
+
+        return hashmap, rooms
 
     def slice_rooms(self, cell_size: int) -> dict[str, Image.Image]:
         """Return a `dict` containing room numbers as keys and sliced room images as values."""

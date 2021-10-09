@@ -65,7 +65,7 @@ class MapAssembler:
         rooms = {}
 
         for rn, slices in self.slice_rooms(cell_size).items():
-            slice_hashes = []
+            room_hashes = []
 
             for slice in slices:
                 hash = hashlib.md5(slice.tobytes()).hexdigest()
@@ -77,9 +77,9 @@ class MapAssembler:
                     curr_index = len(unique_hashes) - 1
                     hashmap[curr_index if numeric_indices else hash] = slice
 
-                slice_hashes.append(curr_index if numeric_indices else hash)
+                room_hashes.append(curr_index if numeric_indices else hash)
 
-            rooms[rn] = slice_hashes
+            rooms[rn] = room_hashes
 
         return hashmap, rooms
 

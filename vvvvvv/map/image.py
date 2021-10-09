@@ -58,9 +58,9 @@ class MapAssembler:
         return map_img
 
     def slice_rooms_deduplicated(
-        self, cell_size: int
+        self, cell_size: int, numeric_indices: bool = True
     ) -> tuple[dict[str, Image.Image], dict[str, str]]:
-        visited_hashes = set()
+        unique_hashes = []
         hashmap = {}
         rooms = {}
 
@@ -69,11 +69,15 @@ class MapAssembler:
 
             for slice in slices:
                 hash = hashlib.md5(slice.tobytes()).hexdigest()
-                if hash not in visited_hashes:
-                    visited_hashes.add(hash)
-                    hashmap[hash] = slice
 
-                slice_hashes.append(hash)
+                try:
+                    curr_index = unique_hashes.index(hash)
+                except ValueError:
+                    unique_hashes.append(hash)
+                    curr_index = len(unique_hashes) - 1
+                    hashmap[curr_index if numeric_indices else hash] = slice
+
+                slice_hashes.append(curr_index if numeric_indices else hash)
 
             rooms[rn] = slice_hashes
 

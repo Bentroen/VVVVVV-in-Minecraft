@@ -141,7 +141,7 @@ class LoadFunctionGenerator:
 
             for slice_number, slice_index in enumerate(slice_hashes):
                 lines.append(
-                    f"data modify entity @e[tag=room{slice_number+1}] HandItems[0].tag.CustomModelData set value {slice_index}"
+                    f"data modify entity @e[type=armor_stand,tag=room{slice_number+1},limit=1] HandItems[0].tag.CustomModelData set value {slice_index}"
                 )
 
             id = room_number.replace(",", "_")

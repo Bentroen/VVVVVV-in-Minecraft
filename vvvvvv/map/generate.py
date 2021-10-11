@@ -30,8 +30,8 @@ def beet_default(ctx: Context):
     start = time.time()
     modelgen = ModelGenerator()
     for id, model, texture in modelgen.generate(slices, sliced_rooms):
-        ctx.assets[f"vvvvvv:map/rooms/{id}"] = model
-        ctx.assets[f"vvvvvv:map/rooms/{id}"] = texture
+        ctx.assets[f"vvvvvv:rooms/{id}"] = model
+        ctx.assets[f"vvvvvv:rooms/{id}"] = texture
     ctx.assets["minecraft:item/diamond_hoe"] = modelgen.get_multipart()
     print(f"Models generated. Operation took {time.time() - start} seconds.")
 

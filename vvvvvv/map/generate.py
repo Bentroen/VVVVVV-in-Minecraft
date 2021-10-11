@@ -1,5 +1,5 @@
 from typing import Iterator
-from beet import Context, Texture, Model, Structure
+from beet import Context, Texture, Model, Structure, Function
 from nbtlib import tag
 import numpy as np
 
@@ -24,8 +24,8 @@ def beet_default(ctx: Context):
 
     modelgen = ModelGenerator()
     for id, model, texture in modelgen.generate(slices, sliced_rooms):
-        ctx.assets[f"vvvvvv:rooms/{id}"] = model
-        ctx.assets[f"vvvvvv:rooms/{id}"] = texture
+        ctx.assets[f"vvvvvv:map/rooms/{id}"] = model
+        ctx.assets[f"vvvvvv:map/rooms/{id}"] = texture
     ctx.assets["minecraft:item/diamond_hoe"] = modelgen.get_multipart()
 
     structure = CollisionGenerator().generate(rooms)
@@ -132,6 +132,19 @@ class CollisionGenerator:
         )
 
 
-# class LoadFunctionGenerator:
+class LoadFunctionGenerator:
+    def generate(self, rooms: dict, sliced_rooms: dict) -> Function:
 
-#    yield Function()
+        for room_number, slice_hashes in sliced_rooms.items():
+            # rx, ry = tuple(int(x) for x in room_number.split(","))
+            lines = []
+
+            for slice_number, slice_index in enumerate(slice_hashes):
+                lines.append(
+                    f"data modify entity @e[tag=room{slice_number+1}] HandItems[0].tag.CustomModelData set value {slice_index}"
+                )
+
+            id = room_number.replace(",", "_")
+            function = Function(lines)
+
+            yield id, function

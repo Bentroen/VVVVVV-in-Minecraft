@@ -1,8 +1,6 @@
 from PIL import Image
-import zipfile
+from ..utils.file import AssetLoader
 
-
-source_path = "../data.zip"
 
 tilemaps = ["graphics/tiles.png", "graphics/tiles2.png", "graphics/tiles3.png"]
 
@@ -23,17 +21,6 @@ class TileGrabber:
 
     def get_tile(self, id: int, tileset: int) -> Image:
         return self._tiles[tileset * 1200 + id]
-
-
-# TODO: Move this class to a separate module in the future to unify data access
-# TODO: Implement context manager to automatically close files
-class AssetLoader:
-    def __init__(self):
-        self._assets = zipfile.ZipFile(source_path)
-
-    def load_img(self, filename: str) -> Image:
-        data = self._assets.open(filename)
-        return Image.open(data)
 
 
 if __name__ == "__main__":

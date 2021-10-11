@@ -19,9 +19,11 @@ from . import map_data
 def beet_default(ctx: Context):
 
     rooms = map_data.fetch_map_data()
+    image = MapAssembler(rooms)
+    slices, sliced_rooms = image.slice_rooms_deduplicated(10)
 
     modelgen = ModelGenerator()
-    for id, model, texture in modelgen.generate(rooms):
+    for id, model, texture in modelgen.generate(slices, sliced_rooms):
         ctx.assets[f"vvvvvv:rooms/{id}"] = model
         ctx.assets[f"vvvvvv:rooms/{id}"] = texture
     ctx.assets["minecraft:item/diamond_hoe"] = modelgen.get_multipart()
@@ -34,10 +36,9 @@ class ModelGenerator:
     def __init__(self):
         self._multipart = self._get_multipart_base()
 
-    def generate(self, rooms: dict) -> Iterator[tuple[str, Model, Texture]]:
-        image = MapAssembler(rooms)
-        slices, sliced_rooms = image.slice_rooms_deduplicated(10)
-
+    def generate(
+        self, slices: dict, sliced_rooms: dict
+    ) -> Iterator[tuple[str, Model, Texture]]:
         for room_count, (room_number, slice_hashes) in enumerate(sliced_rooms.items()):
             rx, ry = tuple(int(x) for x in room_number.split(","))
 

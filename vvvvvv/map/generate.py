@@ -2,6 +2,7 @@ from typing import Iterator
 from beet import Context, Texture, Model, Structure, Function
 from nbtlib import tag
 import numpy as np
+import time
 
 from .image import MapAssembler
 from . import map_data
@@ -18,18 +19,36 @@ from . import map_data
 
 def beet_default(ctx: Context):
 
+    print("Retrieving map data...")
+    start = time.time()
     rooms = map_data.fetch_map_data()
     image = MapAssembler(rooms)
     slices, sliced_rooms = image.slice_rooms_deduplicated(10)
+    print(f"Retrieved map data. Operation took {time.time() - start} seconds.")
 
+    print("Generating models...")
+    start = time.time()
     modelgen = ModelGenerator()
     for id, model, texture in modelgen.generate(slices, sliced_rooms):
         ctx.assets[f"vvvvvv:map/rooms/{id}"] = model
         ctx.assets[f"vvvvvv:map/rooms/{id}"] = texture
     ctx.assets["minecraft:item/diamond_hoe"] = modelgen.get_multipart()
+    print(f"Models generated. Operation took {time.time() - start} seconds.")
 
+    print("Generating collision structure...")
+    start = time.time()
     structure = CollisionGenerator().generate(rooms)
     ctx.data["vvvvvv:map_collision"] = structure
+    print(
+        f"Generated collision structure. Operation took {time.time() - start} seconds."
+    )
+
+    print("Generating load functions...")
+    start = time.time()
+    functiongen = LoadFunctionGenerator()
+    for id, func in functiongen.generate(rooms, sliced_rooms):
+        ctx.data[f"vvvvvv:rooms/{id}"] = func
+    print(f"Load functions generated. Operation took {time.time() - start} seconds.")
 
 
 class ModelGenerator:
@@ -42,7 +61,6 @@ class ModelGenerator:
         for room_count, (room_number, slice_hashes) in enumerate(sliced_rooms.items()):
             rx, ry = tuple(int(x) for x in room_number.split(","))
 
-            print(f"Processing room {room_count+1}")
 
             for slice_count, hash in enumerate(slice_hashes):
 

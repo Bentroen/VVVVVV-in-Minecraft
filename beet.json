@@ -1,11 +1,13 @@
 {
     "data_pack": {
         "name": "vvvvvv",
+        "description": "VVVVVV in Minecraft by Bentroen",
         "load": ["src"]
 
     },
     "resource_pack": {
         "name": "vvvvvv",
+        "description": "VVVVVV in Minecraft by Bentroen",
         "load": ["assets"]
     },
     "pipeline": [

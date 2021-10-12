@@ -178,17 +178,21 @@ def get_room_stack_position(rx: int, ry: int) -> tuple[int, int]:
 
 
 def room_coords_to_id(rx: int, ry: int) -> tuple[int, tuple[int, int]]:
+    """Return a unique ID in the range 0-499 for the room with coordinates
+    `rx, ry`, as well as the new room position before converting to its ID.
+    """
+
     # The room numbering system used by VVVVVV leaves a huge "gap" between
-    # the Polar Dimension and World Map rooms (unironically!), which means
-    # transforming them to 1D coordinates would yield huge numbers! Making a
-    # binary tree out of this would be really inefficient.
+    # the Polar Dimension and Dimension VVVVVV rooms (unironically!), which
+    # means transforming them to 1D coordinates would yield huge numbers!
+    # Making a binary tree out of this would be really inefficient.
     #
     # This function tries to "compress" rooms as much as possible into a tiny
-    # space, using as little logic as possible. This exact logic (in reverse)
-    # is mirrored in the MC functions to transform the inputted room coordinates
-    # into that room's unique room ID. We implement it here so that the binary
-    # tree "knows" which room coordinates that ID translates back to, so it can
-    # call the correct room load function.
+    # space, using as little logic as possible. This exact logic is mirrored
+    # in the MC functions to transform the inputted room coordinates into that
+    # room's unique room ID. We implement it here so that the binary tree "knows"
+    # which room coordinates that ID translates back to, so it can call the
+    # the correct room load function.
     #
     # Some numbers:
     #     Original VVVVVV numbering system:         119 x 119 = 14.161 IDs
@@ -223,9 +227,9 @@ def room_coords_to_id(rx: int, ry: int) -> tuple[int, tuple[int, int]]:
     return room_id, (nrx, nry)
 
 
+def room_id_to_coords(room_id: int) -> tuple[int, int]:
+    """Return room coordinates for the room with the unique ID `id`."""
 
-def room_id_to_coords(room_id):
-    """Returns a unique ID for"""
     ry, rx = divmod(room_id, 20)
 
     if ry >= 5:  # World Map
@@ -478,6 +482,7 @@ if __name__ == "__main__":
 
     for room in rooms.keys():
 
+        # Check room overlaps
         x, y = tuple(int(x) for x in room.split(","))
         id, (rx, ry) = room_coords_to_id(x, y)
 

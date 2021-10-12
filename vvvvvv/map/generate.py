@@ -30,8 +30,8 @@ def beet_default(ctx: Context):
     start = time.time()
     modelgen = ModelGenerator()
     for id, model, texture in modelgen.generate(slices, sliced_rooms):
-        ctx.assets[f"vvvvvv:rooms/{id}"] = model
-        ctx.assets[f"vvvvvv:rooms/{id}"] = texture
+        ctx.assets[f"vvvvvv:rooms/{id + 1}"] = model
+        ctx.assets[f"vvvvvv:rooms/{id + 1}"] = texture
     ctx.assets["minecraft:item/diamond_hoe"] = modelgen.get_multipart(
         list(slices.keys())
     )
@@ -64,7 +64,7 @@ class ModelGenerator:
             for slice_count, hash in enumerate(slice_hashes):
 
                 id = f"{rx}_{ry}_{slice_count}"
-                filename = f"vvvvvv:rooms/{hash}"
+                filename = f"vvvvvv:rooms/{hash + 1}"
                 texture = Texture(slices[hash])
                 model = Model(self._get_base_model(filename))
 
@@ -157,7 +157,7 @@ class LoadFunctionGenerator:
 
             for slice_number, slice_index in enumerate(slice_hashes):
                 lines.append(
-                    f"data modify entity @e[type=armor_stand,tag=room{slice_number+1},limit=1] HandItems[0].tag.CustomModelData set value {slice_index}"
+                    f"data modify entity @e[type=armor_stand,tag=room{slice_number+1},limit=1] HandItems[0].tag.CustomModelData set value {slice_index+1}"
                 )
 
             id = room_number.replace(",", "_")

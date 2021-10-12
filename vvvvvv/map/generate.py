@@ -60,7 +60,6 @@ class ModelGenerator:
         for room_count, (room_number, slice_hashes) in enumerate(sliced_rooms.items()):
             rx, ry = tuple(int(x) for x in room_number.split(","))
 
-
             for slice_count, hash in enumerate(slice_hashes):
 
                 id = f"{rx}_{ry}_{slice_count}"

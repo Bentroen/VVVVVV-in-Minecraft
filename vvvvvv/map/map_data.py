@@ -478,11 +478,16 @@ if __name__ == "__main__":
     for room in rooms.keys():
 
         x, y = tuple(int(x) for x in room.split(","))
-        rx, ry, _ = room_coords_to_id(x, y)
+        rx, ry, id = room_coords_to_id(x, y)
 
         if img.getpixel((rx, ry)) != (255, 255, 255, 255):
             img.putpixel((rx, ry), (255, 0, 0))  # room overlap!
         else:
             img.putpixel((rx, ry), (0, 0, 0))  # we're fine!
+
+        # Test equivalence of both functions
+        assert (x, y) == room_id_to_coords(
+            id
+        ), f"room number {x},{y} does not match room id {id}"
 
     img.save("vvvvvv/.cache/coords_to_id.png")

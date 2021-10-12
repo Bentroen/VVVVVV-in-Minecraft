@@ -177,6 +177,52 @@ def get_room_stack_position(rx: int, ry: int) -> tuple[int, int]:
     return stack, index
 
 
+def room_coords_to_id(rx: int, ry: int) -> int:
+    # The room numbering system used by VVVVVV leaves a huge "gap" between
+    # the Polar Dimension and World Map rooms (unironically!), which means
+    # transforming them to 1D coordinates would yield huge numbers! Making a
+    # binary tree out of this would be really inefficient.
+    #
+    # This function tries to "compress" rooms as much as possible into a tiny
+    # space, using as little logic as possible. This exact logic (in reverse)
+    # is mirrored in the MC functions to transform the inputted room coordinates
+    # into that room's unique room ID. We implement it here so that the binary
+    # tree "knows" which room coordinates that ID translates back to, so it can
+    # call the correct room load function.
+    #
+    # Some numbers:
+    #     Original VVVVVV numbering system:         119 x 119 = 14.161 IDs
+    #     Offsetting top-left corner to (0, 0):      78 x 71  =  5.538 IDs
+    #     This madness:                              20 x 25  =    500 IDs
+    #
+    # 500 just happens to fit under 512 (2^9), which means the whole map fits
+    # in a 9-high binary tree.
+    # (I could just have used a quadtree instead, but y'know :P)
+
+    if rx >= 100 and ry >= 100:  # World Map
+        nrx = rx - 100
+        nry = ry - 95
+    else:
+        nrx = rx - 41
+        nry = ry - 50
+
+    if ry == 56:  # Intermission 1
+        nry -= 6  # move 6 rows up
+    elif rx == 53 and ry <= 52:  # Intermission 2
+        nrx += 7  # move to the right edge
+        nry += 2  # move 2 rows down
+    elif (
+        rx == 54 and ry <= 50
+    ):  # Last rooms of final chute (VVVV, VVVVV, VVVVVV, Outer Space)
+        nrx += 1  # move to adjacent column to save vertical space
+        nry += 3  # move 3 rows down
+    else:  # All other final level rooms
+        pass  # leave them where they are!
+
+    room_id = nry * 20 + nrx
+    return nrx, nry, room_id
+
+
 class LevelParser:
     """Parse VVVVVV's `.cpp` files to extract level data, such as tiles and entities."""
 
@@ -394,3 +440,22 @@ def fetch_map_data(force_update: bool = False) -> dict[str, dict]:
 if __name__ == "__main__":
     # Running the module directly or deleting the cache will regenerate the data.
     fetch_map_data(force_update=True)
+
+    # Test room coords to IDs
+
+    from PIL import Image
+
+    img = Image.new("RGBA", (20, 25), (255, 255, 255))
+    rooms = fetch_map_data()
+
+    for room in rooms.keys():
+
+        x, y = tuple(int(x) for x in room.split(","))
+        rx, ry, _ = room_coords_to_id(x, y)
+
+        if img.getpixel((rx, ry)) != (255, 255, 255, 255):
+            img.putpixel((rx, ry), (255, 0, 0))  # room overlap!
+        else:
+            img.putpixel((rx, ry), (0, 0, 0))  # we're fine!
+
+    img.save("vvvvvv/.cache/coords_to_id.png")

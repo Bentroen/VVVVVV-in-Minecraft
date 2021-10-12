@@ -57,15 +57,15 @@ class ModelGenerator:
     def generate(
         self, slices: dict, sliced_rooms: dict
     ) -> Iterator[tuple[str, Model, Texture]]:
-        for slice_hashes in sliced_rooms.values():
+        for slice_ids in sliced_rooms.values():
 
-            for hash in slice_hashes:
+            for id in slice_ids:
 
-                filename = f"vvvvvv:rooms/{hash + 1}"
-                texture = Texture(slices[hash])
+                filename = f"vvvvvv:rooms/{id + 1}"
+                texture = Texture(slices[id])
                 model = Model(self._get_base_model(filename))
 
-                yield hash, texture, model
+                yield id, texture, model
 
     def get_multipart(self, slices: list) -> Model:
         multipart = self._get_multipart_base()
@@ -148,10 +148,10 @@ class CollisionGenerator:
 class LoadFunctionGenerator:
     def generate(self, rooms: dict, sliced_rooms: dict) -> Function:
 
-        for room_number, slice_hashes in sliced_rooms.items():
+        for room_number, slice_ids in sliced_rooms.items():
             lines = []
 
-            for slice_number, slice_index in enumerate(slice_hashes):
+            for slice_number, slice_index in enumerate(slice_ids):
                 lines.append(
                     f"data modify entity @e[type=armor_stand,tag=room{slice_number+1},limit=1] \
                     HandItems[0].tag.CustomModelData set value {slice_index+1}"

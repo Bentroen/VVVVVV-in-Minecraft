@@ -32,7 +32,9 @@ def beet_default(ctx: Context):
     for id, model, texture in modelgen.generate(slices, sliced_rooms):
         ctx.assets[f"vvvvvv:rooms/{id}"] = model
         ctx.assets[f"vvvvvv:rooms/{id}"] = texture
-    ctx.assets["minecraft:item/diamond_hoe"] = modelgen.get_multipart()
+    ctx.assets["minecraft:item/diamond_hoe"] = modelgen.get_multipart(
+        list(slices.keys())
+    )
     print(f"Models generated. Operation took {time.time() - start} seconds.")
 
     print("Generating collision structure...")
@@ -52,9 +54,6 @@ def beet_default(ctx: Context):
 
 
 class ModelGenerator:
-    def __init__(self):
-        self._multipart = self._get_multipart_base()
-
     def generate(
         self, slices: dict, sliced_rooms: dict
     ) -> Iterator[tuple[str, Model, Texture]]:
@@ -71,13 +70,12 @@ class ModelGenerator:
 
                 yield hash, texture, model
 
-                cmd = room_count * 12 + slice_count + 1
-                self._multipart["overrides"].append(
-                    self._get_multipart_predicate(cmd, filename)
-                )
-
-    def get_multipart(self) -> Model:
-        return Model(self._multipart)
+    def get_multipart(self, slices: list) -> Model:
+        multipart = self._get_multipart_base()
+        for id, _ in enumerate(slices):
+            predicate = self._get_multipart_predicate(id + 1, f"vvvvvv:rooms/{id + 1}")
+            multipart["overrides"].append(predicate)
+        return Model(multipart)
 
     def _get_base_model(self, texture: str) -> dict:
         return {"parent": "vvvvvv:base/10x10", "textures": {"texture": texture}}

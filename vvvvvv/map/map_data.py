@@ -223,6 +223,33 @@ def room_coords_to_id(rx: int, ry: int) -> int:
     return nrx, nry, room_id
 
 
+def room_id_to_coords(room_id):
+    """Returns a unique ID for"""
+    ry, rx = divmod(room_id, 20)
+
+    if ry >= 5:  # World Map
+        nrx = rx + 100
+        nry = ry + 95
+    else:
+        nrx = rx + 41
+        nry = ry + 50
+
+    if ry == 0 and rx <= 13:  # Intermission 1
+        nry += 6
+    elif rx == 19 and ry <= 4:  # Intermission 2
+        nrx -= 7
+        nry -= 2
+    elif (
+        rx == 14 and ry <= 3
+    ):  # Last rooms of final chute (VVVV, VVVVV, VVVVVV, Outer Space)
+        nrx -= 1
+        nry -= 3
+    else:  # All other final level rooms
+        pass
+
+    return nrx, nry
+
+
 class LevelParser:
     """Parse VVVVVV's `.cpp` files to extract level data, such as tiles and entities."""
 

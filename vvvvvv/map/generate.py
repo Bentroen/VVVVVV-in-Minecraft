@@ -57,12 +57,10 @@ class ModelGenerator:
     def generate(
         self, slices: dict, sliced_rooms: dict
     ) -> Iterator[tuple[str, Model, Texture]]:
-        for room_count, (room_number, slice_hashes) in enumerate(sliced_rooms.items()):
-            rx, ry = tuple(int(x) for x in room_number.split(","))
+        for slice_hashes in sliced_rooms.values():
 
-            for slice_count, hash in enumerate(slice_hashes):
+            for hash in slice_hashes:
 
-                id = f"{rx}_{ry}_{slice_count}"
                 filename = f"vvvvvv:rooms/{hash + 1}"
                 texture = Texture(slices[hash])
                 model = Model(self._get_base_model(filename))
@@ -151,7 +149,6 @@ class LoadFunctionGenerator:
     def generate(self, rooms: dict, sliced_rooms: dict) -> Function:
 
         for room_number, slice_hashes in sliced_rooms.items():
-            # rx, ry = tuple(int(x) for x in room_number.split(","))
             lines = []
 
             for slice_number, slice_index in enumerate(slice_hashes):

@@ -177,7 +177,7 @@ def get_room_stack_position(rx: int, ry: int) -> tuple[int, int]:
     return stack, index
 
 
-def room_coords_to_id(rx: int, ry: int) -> int:
+def room_coords_to_id(rx: int, ry: int) -> tuple[int, tuple[int, int]]:
     # The room numbering system used by VVVVVV leaves a huge "gap" between
     # the Polar Dimension and World Map rooms (unironically!), which means
     # transforming them to 1D coordinates would yield huge numbers! Making a
@@ -220,7 +220,8 @@ def room_coords_to_id(rx: int, ry: int) -> int:
         pass  # leave them where they are!
 
     room_id = nry * 20 + nrx
-    return nrx, nry, room_id
+    return room_id, (nrx, nry)
+
 
 
 def room_id_to_coords(room_id):
@@ -478,7 +479,7 @@ if __name__ == "__main__":
     for room in rooms.keys():
 
         x, y = tuple(int(x) for x in room.split(","))
-        rx, ry, id = room_coords_to_id(x, y)
+        id, (rx, ry) = room_coords_to_id(x, y)
 
         if img.getpixel((rx, ry)) != (255, 255, 255, 255):
             img.putpixel((rx, ry), (255, 0, 0))  # room overlap!

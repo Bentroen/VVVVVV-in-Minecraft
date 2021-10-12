@@ -392,4 +392,5 @@ def fetch_map_data(force_update: bool = False) -> dict[str, dict]:
 
 
 if __name__ == "__main__":
+    # Running the module directly or deleting the cache will regenerate the data.
     fetch_map_data(force_update=True)

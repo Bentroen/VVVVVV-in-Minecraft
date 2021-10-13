@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+from typing import Union
 
 
 source_path = "../VVVVVV-master/desktop_version/src"
@@ -177,9 +178,10 @@ def get_room_stack_position(rx: int, ry: int) -> tuple[int, int]:
     return stack, index
 
 
-def room_coords_to_id(rx: int, ry: int) -> tuple[int, tuple[int, int]]:
+def room_coords_to_id(room_coords: tuple[int, int], return_coords: bool=False) -> Union[int, tuple[int, tuple[int, int]]]:
     """Return a unique ID in the range 0-499 for the room with coordinates
-    `rx, ry`, as well as the new room position before converting to its ID.
+    `rx, ry`, If `return_coords` is `True`, return the new room position
+    before converting to its ID.
     """
 
     # The room numbering system used by VVVVVV leaves a huge "gap" between
@@ -203,6 +205,8 @@ def room_coords_to_id(rx: int, ry: int) -> tuple[int, tuple[int, int]]:
     # in a 9-high binary tree.
     # (I could just have used a quadtree instead, but y'know :P)
 
+    rx, ry = room_coords
+
     if rx >= 100 and ry >= 100:  # World Map
         nrx = rx - 100
         nry = ry - 95
@@ -224,8 +228,11 @@ def room_coords_to_id(rx: int, ry: int) -> tuple[int, tuple[int, int]]:
         pass  # leave them where they are!
 
     room_id = nry * 20 + nrx
-    return room_id, (nrx, nry)
 
+    if return_coords:
+        return room_id, (nrx, nry)
+    else:
+        return room_id
 
 def room_id_to_coords(room_id: int) -> tuple[int, int]:
     """Return room coordinates for the room with the unique ID `id`."""
@@ -484,7 +491,7 @@ if __name__ == "__main__":
 
         # Check room overlaps
         x, y = tuple(int(x) for x in room.split(","))
-        id, (rx, ry) = room_coords_to_id(x, y)
+        id, (rx, ry) = room_coords_to_id(x, y, return_coords=True)
 
         if img.getpixel((rx, ry)) != (255, 255, 255, 255):
             img.putpixel((rx, ry), (255, 0, 0))  # room overlap!

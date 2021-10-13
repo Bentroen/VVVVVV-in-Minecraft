@@ -1,5 +1,5 @@
 from typing import Iterator
-from beet import Context, Texture, Model, Structure, Function
+from beet import Context, Texture, Model, Structure, Function, TreeNode
 from nbtlib import tag
 import numpy as np
 import time
@@ -52,6 +52,13 @@ def beet_default(ctx: Context):
         ctx.data[f"vvvvvv:rooms/{id}"] = func
 
     room_coords = []
+    for room in rooms.keys():
+        rx, ry = tuple(int(x) for x in room.split(","))
+        room_coords.append((rx, ry))
+    room_coords.sort(key=map_data.room_coords_to_id)
+    # TODO: Consider passing sorted room IDs and converting them back with `room_id_to_coords` in the leaf nodes
+
+    functiongen.generate_tree(room_coords, ctx)
     print(f"Load functions generated. Operation took {time.time() - start} seconds.")
 
 
@@ -167,3 +174,20 @@ class LoadFunctionGenerator:
             yield id, function
 
         # TODO: Add entities, room name, special cases and everything else!
+
+    def generate_tree(self, room_list: list, ctx: Context):
+        generate = ctx.generate["map"]
+        for node, function in generate.function_tree(
+            "load_room", room_list, key=map_data.room_coords_to_id
+        ):
+            if node.root:
+                ctx.generate(Function([f"function {node.parent}"]))
+            if node.partition(2):
+                function.lines.append(
+                    f"execute if score id room matches {node.range} run function {node.children}"
+                )
+            else:
+                room_coords = "_".join(map(str, node.value))
+                function.lines.append(
+                    f"execute if score id room matches {node.range} run function vvvvvv:rooms/{room_coords}"
+                )

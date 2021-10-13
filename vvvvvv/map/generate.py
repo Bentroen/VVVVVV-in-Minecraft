@@ -48,8 +48,10 @@ def beet_default(ctx: Context):
     print("Generating load functions...")
     start = time.time()
     functiongen = LoadFunctionGenerator()
-    for id, func in functiongen.generate(rooms, sliced_rooms):
+    for id, func in functiongen.generate_rooms(rooms, sliced_rooms):
         ctx.data[f"vvvvvv:rooms/{id}"] = func
+
+    room_coords = []
     print(f"Load functions generated. Operation took {time.time() - start} seconds.")
 
 
@@ -146,7 +148,9 @@ class CollisionGenerator:
 
 
 class LoadFunctionGenerator:
-    def generate(self, rooms: dict, sliced_rooms: dict) -> Function:
+    def generate_rooms(
+        self, rooms: dict, sliced_rooms: dict
+    ) -> Iterator[tuple[str, Function]]:
 
         for room_number, slice_ids in sliced_rooms.items():
             lines = []
@@ -161,3 +165,5 @@ class LoadFunctionGenerator:
             function = Function(lines)
 
             yield id, function
+
+        # TODO: Add entities, room name, special cases and everything else!
